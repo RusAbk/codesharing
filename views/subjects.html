@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+  <!-- bootstrap table -->
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.css">
+
+  <title>Список предметов</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
+    <div class="container">
+      <a class="navbar-brand" href="#"><i class="fa-solid fa-graduation-cap"></i> Methodics</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="/"><i class="fa-solid fa-house-chimney"></i> Главная</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/subjects"><i class="fa-solid fa-book"></i> Предметы</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" id="app">
+    <h1 class="mb-3">Список предметов</h1>
+
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalAddSubject">
+      <i class="fa-solid fa-folder-plus"></i> Добавить предмет
+    </button>
+    <table class="table table-hover table-bordered" id="subjectTable">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Название</th>
+          <th scope="col">Код</th>
+          <th scope="col">Методист</th>
+          <th scope="col">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="subject in subjects">
+          <th scope="row">{{subject.title}}</th>
+          <td>{{subject.code}}</td>
+          <td>{{subject.methodist}}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDelSubjectConfirmation" @click="setSubjToDel(subject._id)">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <!-- Modal Add New Subject -->
+    <div class="modal fade" id="modalAddSubject" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Новый предмет</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="newSubjectTitle" class="form-label">Название</label>
+              <input type="text" class="form-control" id="newSubjectTitle" placeholder="Название предмета" v-model="newSubject.title">
+            </div>
+            <div class="mb-3">
+              <label for="newSubjectCode" class="form-label">Код</label>
+              <input type="text" class="form-control" id="newSubjectCode" placeholder="Код предмета" v-model="newSubject.code">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addSubject">Добавить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Modal Add New Subject -->
+
+    <!-- Modal Edit Subject -->
+    <div class="modal fade" id="modalEditSubject" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Новый предмет</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="newSubjectTitle" class="form-label">Название</label>
+              <input type="text" class="form-control" id="newSubjectTitle" placeholder="Название предмета" v-model="newSubject.title">
+            </div>
+            <div class="mb-3">
+              <label for="newSubjectCode" class="form-label">Код</label>
+              <input type="text" class="form-control" id="newSubjectCode" placeholder="Код предмета" v-model="newSubject.code">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addSubject">Добавить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Modal Edit Subject -->
+
+    <!-- Modal Delete Subject Confirmation -->
+    <div class="modal fade" id="modalDelSubjectConfirmation" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Уверены?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Вы действительно хотите удалить предмет? Отменить это действие будет невозможно!
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="delSubject">Удалить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END Modal Delete Subject Confirmation -->
+
+  </div> 
+  <!-- End of Container -->
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- VUE -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.0/dist/vue.js"></script>
+    <script>
+      const subjectTable = new Vue({
+        el: '#app',
+        data: {
+          subjects: [],
+          subjectToDelete: null,
+          newSubject: {
+            title: '',
+            code: ''
+          }
+        },
+        methods: {
+          addSubject(){
+            if (this.newSubject.title) {
+              socket.emit('subject_add', this.newSubject)
+              this.newSubject.title = this.newSubject.code = '';
+            }
+          },
+
+          setSubjToDel(id){
+            this.subjectToDelete = id;
+          },
+          delSubject(){
+            socket.emit('subject_delete', {id: this.subjectToDelete})
+          }
+        }
+      })
+    </script>
+
+    <!-- Socket io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socket = io();
+
+      socket.emit('rooms_join', {
+        title: 'subjectList'
+      });
+      socket.emit('subject_getList');
+
+      socket.on('subject_listTaken', function (data) {
+        console.log(data);
+        subjectTable.subjects = data;
+      });
+      socket.on('subject_added', function (data) {
+        console.log(data);
+        subjectTable.subjects.push(data);
+      });
+      socket.on('subject_deleted', function (data) {
+        console.log(data);
+        let i = -1;
+        for(subjectInd in subjectTable.subjects){
+          console.log(subjectTable.subjects[subjectInd]);
+          if(subjectTable.subjects[subjectInd]._id == data.id){
+            i = subjectInd;
+            break;
+          }
+        }
+        subjectTable.subjects.splice(i, 1);
+      });
+    </script>
+</body>
+
+</html>
