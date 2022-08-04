@@ -12,7 +12,7 @@
   <!-- bootstrap table -->
   <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.css">
 
-  <title>Список предметов</title>
+  <title>Live_sharing</title>
 </head>
 
 <body>
@@ -187,6 +187,7 @@
       socket.emit('rooms_join', {
         title: 'subjectList'
       });
+      
       socket.emit('subject_getList');
 
       socket.on('subject_listTaken', function (data) {

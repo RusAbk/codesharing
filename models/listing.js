@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 
-let subjectSchema = mongoose.Schema({
+let listingSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     title: String,
     code: String,
-    methodist: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User',
-        default: null
-    },
+    author: String,
+    password: String,
+    hash_id: String,
     created: { 
         type: Date,
         default: Date.now
@@ -19,6 +17,6 @@ let subjectSchema = mongoose.Schema({
     },
 });
 
-const subjectModel = mongoose.model('Subject', subjectSchema)
+const listingModel = mongoose.model('Listing', listingSchema)
 
-module.exports = subjectModel;
+module.exports = listingModel;
