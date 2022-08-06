@@ -15,12 +15,17 @@ mongoose.connect('mongodb://localhost/codesharing', function (error){
 
 const ListingModel = require('./models/listing');
 
-app.get('/create', (req, res) => {
-  res.sendFile(__dirname + '/views/create_snippet.html');
-});
-app.get('/:snippet_id', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
+
+app.get('/show/:listing_id', (req, res) => {
+  res.sendFile(__dirname + '/views/show.html');
+});
+
+// app.get('/:snippet_id', (req, res) => {
+//   res.sendFile(__dirname + '/views/index.html');
+// });
 
 // app.get('/snippets', (req, res) => {
 //   res.sendFile(__dirname + '/views/snippet.html');
@@ -40,18 +45,30 @@ io.on('connection', (socket) => {
     socket.join(data.title);
   })
 
-  socket.on('listing_add', (data) =>{
+  socket.on('listing_create', (data) =>{
+    let newListingCode;
+    let found = false;
+    do{
+      newListingCode = getRandomString(6)
+      ListingModel.find().exec((err, subjects)=>{
+        if (err) throw err;
+        if(subjects.length > 0)
+          found = true;
+      });
+    }
+    while(found)
+
     let newListing = new ListingModel({
         _id: new mongoose.Types.ObjectId(),
         title: data.title,
         author: data.author,
         password: crypto.createHash('md5').update(data.password).digest('hex'),
-        code: '',
+        code: newListingCode,
     });
-    newSubj.save(function(err) {
+    newListing.save(function(err) {
       if (err) throw err;
       console.log('Subject successfully saved.');
-      io.to('subjectList').emit('subject_added', newSubj)
+      socket.emit('listing_created', newListing)
     });
   })
 
